@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PrintNow — прототип</title>
+<style>
+:root{--ink:#1F2A30;--muted:#596469;--line:#D9D5CC;--paper:#F2EEE6;--card:#fff;--accent:#C8622F;--accent-soft:#FBEDE4;--ok:#2F6B4F;--ok-soft:#E5F1EA;--warn:#8A5A00;--warn-soft:#FBF1D9;--err:#A32F2F;--err-soft:#F9E6E6}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font:16px/1.45 "IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--paper)}
+button,input,select{font:inherit;color:inherit}
+a{color:var(--accent)}
+h1{font-size:24px;line-height:1.25;margin:0 0 4px}
+h2{font-size:17px;margin:0 0 10px}
+p{margin:0 0 10px}
+.topbar{background:var(--ink);color:#fff;display:flex;flex-wrap:wrap;align-items:center;gap:6px 14px;padding:10px 16px}
+.logo{font-weight:700;font-size:18px;letter-spacing:.2px}
+.logo span{color:#E8946A}
+.roles{display:flex;gap:4px;flex-wrap:wrap}
+.roles a{color:#D8DDDF;text-decoration:none;padding:5px 10px;border-radius:7px;font-size:14px}
+.roles a[aria-current=true]{background:#fff;color:var(--ink);font-weight:600}
+.proto-note{margin-left:auto;font-size:12px;color:#B9C1C4;display:flex;gap:10px;align-items:center}
+.proto-note button{background:none;border:1px solid #5A676D;color:#D8DDDF;border-radius:6px;padding:2px 8px;font-size:12px;cursor:pointer}
+main{padding:20px 16px 48px}
+.phone{max-width:420px;margin:0 auto}
+.wide{max-width:980px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:12px}
+.step{font-size:13px;color:var(--muted);margin-bottom:6px}
+.sub{color:var(--muted);margin-bottom:14px}
+label{display:block;font-size:14px;font-weight:600;margin-bottom:4px}
+.field{margin-bottom:12px}
+input[type=text],input[type=tel],input[type=password],input[type=number],select{width:100%;padding:10px 12px;background:#fff;border:1px solid #B8B3A8;border-radius:8px}
+input:focus-visible,select:focus-visible,button:focus-visible,a:focus-visible{outline:3px solid #E8946A;outline-offset:1px}
+.btn{display:inline-block;background:var(--accent);color:#fff;border:0;border-radius:9px;padding:12px 16px;font-weight:600;cursor:pointer;text-decoration:none;text-align:center}
+.btn.full{display:block;width:100%}
+.btn.sec{background:#fff;color:var(--ink);border:1px solid #B8B3A8}
+.btn.small{padding:6px 10px;font-size:14px;border-radius:7px}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.row{display:flex;justify-content:space-between;gap:12px;padding:5px 0}
+.row.total{border-top:1px solid var(--line);margin-top:6px;padding-top:10px;font-weight:700;font-size:18px}
+.muted{color:var(--muted)}.small{font-size:13px}
+.err{background:var(--err-soft);color:var(--err);border-radius:8px;padding:8px 10px;font-size:14px;margin-bottom:10px}
+.ok{background:var(--ok-soft);color:var(--ok);border-radius:8px;padding:10px 12px;font-size:14px;margin-bottom:12px}
+.warn{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:8px 10px;font-size:13px;margin-bottom:12px}
+.drop{border:2px dashed #B8B3A8;border-radius:12px;padding:20px;text-align:center;background:#FBFAF7;margin-bottom:12px}
+.file{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line)}
+.file:last-child{border-bottom:0}
+.linkbtn{background:none;border:0;color:var(--accent);cursor:pointer;padding:2px 0;text-decoration:underline;font-size:14px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg label{flex:1 1 0;font-weight:500;margin:0;min-width:70px}
+.seg input{position:absolute;opacity:0}
+.seg label{display:flex}
+.seg span{display:flex;flex:1;align-items:center;justify-content:center;text-align:center;padding:9px 6px;border:1px solid #B8B3A8;border-radius:8px;background:#fff;cursor:pointer;font-size:14px}
+.seg input:checked+span{background:var(--ink);color:#fff;border-color:var(--ink)}
+.seg input:focus-visible+span{outline:3px solid #E8946A}
+.steps{list-style:none;margin:0;padding:0}
+.steps li{display:flex;gap:10px;align-items:center;padding:7px 0;color:var(--muted)}
+.steps i{width:22px;height:22px;border-radius:50%;background:#E6E2DA;display:inline-flex;align-items:center;justify-content:center;font-style:normal;font-size:12px;font-weight:700;flex:none}
+.steps li.done{color:var(--ink)}.steps li.done i{background:var(--ok);color:#fff}
+.steps li.now{color:var(--ink);font-weight:700}.steps li.now i{background:var(--accent);color:#fff}
+.code{font-size:38px;font-weight:700;letter-spacing:8px;text-align:center;padding:8px 0 2px}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th{text-align:left;font-size:12px;color:var(--muted);font-weight:600;border-bottom:1px solid var(--line);padding:6px 8px}
+td{border-bottom:1px solid #EAE7E0;padding:9px 8px;vertical-align:top}
+td.num,th.num{text-align:right;white-space:nowrap;font-variant-numeric:tabular-nums}
+.tag{display:inline-block;padding:2px 8px;border-radius:20px;font-size:12px;font-weight:600;white-space:nowrap}
+.t-принят{background:#E6EDF3;color:#28506E}.t-впечати,.t-в_печати{background:var(--warn-soft);color:var(--warn)}.t-готов{background:var(--ok-soft);color:var(--ok)}.t-выдан{background:#E6E2DA;color:var(--muted)}.t-отменён{background:var(--err-soft);color:var(--err)}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:12px;margin-bottom:12px}
+.kpi b{display:block;font-size:24px;line-height:1.2}
+.subnav{display:flex;gap:6px;margin-bottom:14px;flex-wrap:wrap}
+.subnav a{padding:6px 12px;border-radius:7px;text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);font-size:14px}
+.subnav a[aria-current=true]{background:var(--ink);color:#fff;border-color:var(--ink)}
+.stars button{background:none;border:0;font-size:24px;line-height:1;cursor:pointer;color:#C9C4B9;padding:0 2px}
+.stars button.on{color:var(--accent)}
+.actions{display:flex;gap:6px;flex-wrap:wrap}
+.tablewrap{overflow-x:auto}
+@media (max-width:640px){.proto-note{margin-left:0;width:100%}}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">Print<span>Now</span></div>
+  <nav class="roles" aria-label="Роль в прототипе" id="roles"></nav>
+  <div class="proto-note"><span>Прототип: оплата и файлы имитируются</span><button id="reset" type="button">Сбросить данные</button></div>
+</header>
+<main id="app" tabindex="-1"></main>
+<script>
+"use strict";
+var KEY="printnow.proto.v1";
+var FEE=1000;
+var POINT="Точка у университета";
+var FORMATS={A4:"A4",A3:"A3"};
+var COLORS={bw:"Чёрно-белая",color:"Цветная"};
+var BIND={none:"Без переплёта",spring:"Пружина",hard:"Твёрдый"};
+var ST=["принят","в печати","готов","выдан"];
+function seed(){
+  var now=Date.now();
+  function o(id,mins,status,file,pages,fmt,col,copies,bind,code,client){
+    var unit={A4:{bw:500,color:2000},A3:{bw:1000,color:4000}}[fmt][col];
+    var bp={none:0,spring:8000,hard:25000}[bind];
+    var print=(unit*pages+bp)*copies;
+    return {id:id,createdAt:now-mins*60000,status:status,code:code,client:client,mine:false,rating:0,items:[{file:file,pages:pages,format:fmt,color:col,copies:copies,binding:bind,unit:unit,bindPrice:bp,line:print}],print:print,fee:FEE,discount:0,total:print+FEE,eta:now+(status==="готов"?-5:12+id%7)*60000};
+  }
+  return {
+    session:null,draft:null,nextId:1050,toast:null,
+    prices:{A4:{bw:500,color:2000},A3:{bw:1000,color:4000},spring:8000,hard:25000},
+    orders:[
+      o(1041,48,"готов","Договор_поставки.pdf",12,"A4","bw",2,"none","4417","+998 90 ••• 12 04"),
+      o(1042,31,"в печати","Презентация_клиент.pdf",18,"A4","color",1,"spring","7302","+998 93 ••• 77 15"),
+      o(1043,22,"принят","Курсовая_экономика.docx",46,"A4","bw",1,"hard","2958","+998 97 ••• 30 61"),
+      o(1044,9,"принят","Чертёж_план.jpg",1,"A3","color",3,"none","6184","+998 91 ••• 58 20"),
+      o(1038,1500,"выдан","Реферат_история.pdf",15,"A4","bw",1,"none","1190","+998 90 ••• 44 02"),
+      o(1039,1450,"выдан","Лабораторная_3.docx",9,"A4","bw",2,"none","8821","+998 99 ••• 11 36"),
+      o(1040,3000,"выдан","Отчёт_практика.pdf",32,"A4","bw",1,"spring","3376","+998 94 ••• 62 09")
+    ]
+  };
+}
+/* Хранилище и адрес работают в любом режиме открытия: обычный файл, сайт или встроенная панель без localStorage. */
+var store=(function(){try{var t=window.localStorage;t.getItem(KEY);return t}catch(e){var m={};return{getItem:function(k){return k in m?m[k]:null},setItem:function(k,v){m[k]=String(v)},removeItem:function(k){delete m[k]}}}})();
+var inFrame=(function(){try{return window.self!==window.top}catch(e){return true}})();
+var useHash=/^(https?|file):$/.test(location.protocol)&&!inFrame; /* во встроенном окне (например, на странице Claude) адрес не трогаем */
+var CUR="#/upload";
+function load(){try{var s=JSON.parse(store.getItem(KEY));if(s&&s.orders)return s}catch(e){}return seed()}
+var S=load();
+function save(){try{store.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function money(n){return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g," ")+" сум"}
+function esc(t){return String(t).replace(/[&<>"']/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]})}
+function time(ts){var d=new Date(ts);return ("0"+d.getHours()).slice(-2)+":"+("0"+d.getMinutes()).slice(-2)}
+function byId(id){return S.orders.filter(function(o){return o.id===+id})[0]}
+function tag(s){return '<span class="tag t-'+s.replace(" ","_")+'">'+s[0].toUpperCase()+s.slice(1)+'</span>'}
+function params(it){return it.format+", "+COLORS[it.color].toLowerCase()+", "+it.copies+" коп., "+BIND[it.binding].toLowerCase()}
+function calc(d){
+  var print=0;var items=d.files.map(function(f){
+    var unit=S.prices[d.format][d.color];
+    var line=unit*f.pages*d.copies;print+=line;
+    return {file:f.name,pages:f.pages,format:d.format,color:d.color,copies:d.copies,binding:d.binding,unit:unit,bindPrice:0,line:line};
+  });
+  var bp1=d.binding==="none"?0:S.prices[d.binding];
+  var bp=bp1*d.copies;
+  if(items[0]){items[0].bindPrice=bp1;items[0].line+=bp}
+  print+=bp;
+  var discount=d.promo==="СТАРТ"?Math.round(print*.1):0;
+  var pagesTotal=d.files.reduce(function(a,f){return a+f.pages},0)*d.copies;
+  var queue=S.orders.filter(function(o){return o.status==="принят"||o.status==="в печати"}).length;
+  var mins=Math.max(5,Math.ceil(pagesTotal/20))+queue*4+(d.binding==="none"?0:5);
+  return {items:items,print:print,bindPrice:bp,fee:FEE,discount:discount,total:print-discount+FEE,mins:mins};
+}
+function shell(role,inner){document.getElementById("app").innerHTML=inner;roles(role);}
+function roles(cur){
+  var r=[["client","Клиент","#/upload"],["op","Оператор печати","#/op/queue"],["admin","Администратор точки","#/admin/prices"]];
+  document.getElementById("roles").innerHTML=r.map(function(x){return '<a href="'+x[2]+'" aria-current="'+(x[0]===cur)+'">'+x[1]+'</a>'}).join("");
+}
+function go(h){if(useHash&&location.hash!==h){location.hash=h}else{CUR=h;route()}}
+
+/* Э-00 Вход */
+function vLogin(err,keepPh,keepPw){
+  shell("client",'<div class="phone"><div class="step">Шаг 1 из 5</div><h1>Вход или регистрация</h1><p class="sub">Телефон нужен, чтобы сообщить о готовности заказа.</p>'+
+  '<form class="card" id="f" novalidate>'+(err?'<div class="err" role="alert">'+esc(err)+'</div>':'')+
+  '<div class="field"><label for="ph">Телефон</label><input id="ph" type="tel" autocomplete="off" placeholder="+998 90 123 45 67"></div>'+
+  '<div class="field"><label for="pw">Пароль, не короче 8 символов</label><input id="pw" type="password" autocomplete="off"></div>'+
+  '<button class="btn full" type="submit">Продолжить</button></form></div>');
+  var phEl=document.getElementById("ph"),pwEl=document.getElementById("pw");
+  if(keepPh)phEl.value=keepPh;if(keepPw)pwEl.value=keepPw;
+  if(err)(/телефон/i.test(err)?phEl:pwEl).focus();
+  document.getElementById("f").onsubmit=function(e){e.preventDefault();
+    var raw=phEl.value,ph=raw.replace(/\D/g,""),pw=pwEl.value;
+    if(ph.length<9)return vLogin("Введите телефон полностью: не меньше 9 цифр.",raw,pw);
+    if(pw.length<8)return vLogin("Пароль слишком короткий: нужно не меньше 8 символов.",raw);
+    S.session={phone:"+"+ph};save();go("#/upload");
+  };
+}
+/* Э-01 Загрузка файла */
+function vUpload(err){
+  if(!S.session)return vLogin();
+  S.draft=S.draft||{files:[],format:"A4",color:"bw",copies:1,binding:"none",promo:""};
+  var d=S.draft;
+  shell("client",'<div class="phone"><div class="subnav"><a href="#/upload" aria-current="true">Новый заказ</a><a href="#/orders">Мои заказы</a></div>'+
+  '<div class="step">Шаг 2 из 5</div><h1>Загрузите файл</h1><p class="sub">'+POINT+'. PDF, DOCX или JPG, до 20 МБ.</p>'+
+  (err?'<div class="err" role="alert">'+esc(err)+'</div>':'')+
+  '<div class="drop"><p><label for="fi" class="btn sec" style="display:inline-block;font-weight:600">Выбрать файл</label><input id="fi" type="file" accept=".pdf,.docx,.jpg,.jpeg" multiple style="position:absolute;left:-9999px"></p>'+
+  '<button class="linkbtn" id="demo" type="button">Взять пример: Курсовая.pdf, 24 страницы</button></div>'+
+  (d.files.length?'<div class="card">'+d.files.map(function(f,i){return '<div class="file"><div><div>'+esc(f.name)+'</div><div class="small muted">'+f.size+' МБ · страниц: <input aria-label="Страниц в файле '+esc(f.name)+'" data-p="'+i+'" type="number" min="1" max="999" value="'+f.pages+'" style="width:70px;padding:3px 6px"></div></div><button class="linkbtn" data-rm="'+i+'" type="button">Убрать</button></div>'}).join("")+'<p class="small muted" style="margin:8px 0 0">Проверьте число страниц: от него зависит цена.</p></div>':'')+
+  '<button class="btn full" id="next" type="button" '+(d.files.length?'':'disabled')+'>Дальше: параметры</button></div>');
+  document.getElementById("fi").onchange=function(e){
+    var msg=null;Array.prototype.forEach.call(e.target.files,function(f){
+      var ok=/\.(pdf|docx|jpe?g)$/i.test(f.name);
+      if(!ok){msg="Файл «"+f.name+"» не подходит: можно PDF, DOCX или JPG.";return}
+      if(f.size>20*1048576){msg="Файл «"+f.name+"» больше 20 МБ.";return}
+      d.files.push({name:f.name,size:(f.size/1048576).toFixed(1),pages:/\.jpe?g$/i.test(f.name)?1:10});
+    });save();vUpload(msg);
+  };
+  document.getElementById("demo").onclick=function(){d.files.push({name:"Курсовая.pdf",size:"2.4",pages:24});save();vUpload()};
+  Array.prototype.forEach.call(document.querySelectorAll("[data-rm]"),function(b){b.onclick=function(){d.files.splice(+b.dataset.rm,1);save();vUpload()}});
+  Array.prototype.forEach.call(document.querySelectorAll("[data-p]"),function(i){i.onchange=function(){d.files[+i.dataset.p].pages=Math.max(1,+i.value||1);save()}});
+  document.getElementById("next").onclick=function(){if(d.files.length)go("#/params")};
+}
+function seg(name,opts,val){return '<div class="seg" role="radiogroup">'+Object.keys(opts).map(function(k){return '<label><input type="radio" name="'+name+'" value="'+k+'" '+(k===val?'checked':'')+'><span>'+opts[k]+'</span></label>'}).join("")+'</div>'}
+/* Э-02 Параметры и цена */
+function vParams(){
+  if(!S.session)return vLogin();
+  if(!S.draft||!S.draft.files.length)return go("#/upload");
+  var d=S.draft;
+  shell("client",'<div class="phone"><div class="step">Шаг 3 из 5</div><h1>Параметры и цена</h1><p class="sub">Цена пересчитывается сразу при смене параметра.</p>'+
+  '<div class="card"><div class="field"><label>Формат</label>'+seg("format",FORMATS,d.format)+'</div>'+
+  '<div class="field"><label>Цвет</label>'+seg("color",COLORS,d.color)+'</div>'+
+  '<div class="field"><label for="cp">Копий</label><input id="cp" type="number" min="1" max="99" value="'+d.copies+'"></div>'+
+  '<div class="field" style="margin-bottom:0"><label>Переплёт</label>'+seg("binding",BIND,d.binding)+'</div></div>'+
+  '<div class="card" id="price" aria-live="polite"></div>'+
+  '<button class="btn full" id="next" type="button">Дальше: оплата</button><p style="margin-top:10px"><a href="#/upload">Назад к файлам</a></p></div>');
+  function draw(){var c=calc(d);document.getElementById("price").innerHTML=
+    '<div class="row"><span>Печать'+(c.bindPrice?' и переплёт':'')+'</span><span>'+money(c.print)+'</span></div>'+
+    '<div class="row"><span>Сервисный сбор PrintNow<br><span class="small muted">За заказ без очереди, один на заказ</span></span><span style="white-space:nowrap">'+money(c.fee)+'</span></div>'+
+    '<div class="row total"><span>Итого</span><span>'+money(c.total)+'</span></div>'+
+    '<div class="small muted" style="margin-top:6px">Ожидаемая готовность: примерно через '+c.mins+' мин, к '+time(Date.now()+c.mins*60000)+'</div>'}
+  draw();
+  Array.prototype.forEach.call(document.querySelectorAll("input[type=radio]"),function(r){r.onchange=function(){d[r.name]=r.value;save();draw()}});
+  document.getElementById("cp").oninput=function(e){d.copies=Math.min(99,Math.max(1,+e.target.value||1));save();draw()};
+  document.getElementById("next").onclick=function(){go("#/pay")};
+}
+/* Э-03 Оплата */
+function vPay(msg){
+  if(!S.session)return vLogin();
+  if(!S.draft||!S.draft.files.length)return go("#/upload");
+  var d=S.draft,c=calc(d);
+  shell("client",'<div class="phone"><div class="step">Шаг 4 из 5</div><h1>Оплата заказа</h1><p class="sub">'+POINT+'. Данные карты вводятся на стороне платёжного провайдера.</p>'+
+  '<div class="card">'+c.items.map(function(i){return '<div class="row"><span>'+esc(i.file)+'<br><span class="small muted">'+i.pages+' стр., '+params(i)+'</span></span><span style="white-space:nowrap">'+money(i.line)+'</span></div>'}).join("")+
+  (c.discount?'<div class="row"><span>Скидка по промокоду</span><span>−'+money(c.discount)+'</span></div>':'')+
+  '<div class="row"><span>Сервисный сбор PrintNow</span><span>'+money(c.fee)+'</span></div><div class="row total"><span>К оплате</span><span>'+money(c.total)+'</span></div></div>'+
+  '<div class="card"><label for="pr">Промокод, если есть</label><div style="display:flex;gap:6px"><input id="pr" type="text" value="'+esc(d.promo)+'" autocomplete="off"><button class="btn sec" id="apply" type="button">Применить</button></div>'+(msg?'<div class="small" style="margin-top:6px">'+esc(msg)+'</div>':'')+'</div>'+
+  '<div class="card"><label>Способ оплаты</label>'+seg("method",{payme:"Payme",click:"Click"},d.method||"payme")+'</div>'+
+  '<button class="btn full" id="payb" type="button">Оплатить '+money(c.total)+'</button><p style="margin-top:10px"><a href="#/params">Назад к параметрам</a></p></div>');
+  document.getElementById("apply").onclick=function(){var v=document.getElementById("pr").value.trim().toUpperCase();d.promo=v;save();vPay(v==="СТАРТ"?"Скидка 10 % на печать применена.":v?"Такого промокода нет.":"")};
+  document.getElementById("payb").onclick=function(){
+    var id=S.nextId++;
+    var code=String(1000+((id*7919)%9000));
+    S.orders.push({id:id,createdAt:Date.now(),status:"принят",code:code,client:S.session.phone,mine:true,rating:0,items:c.items,print:c.print,fee:c.fee,discount:c.discount,total:c.total,eta:Date.now()+c.mins*60000,method:d.method||"payme"});
+    S.draft=null;save();go("#/status/"+id);
+  };
+  Array.prototype.forEach.call(document.querySelectorAll("input[name=method]"),function(r){r.onchange=function(){d.method=r.value;save()}});
+}
+/* Э-04 Статус */
+function vStatus(id){
+  var o=byId(id);if(!o)return go("#/orders");
+  var idx=ST.indexOf(o.status);
+  var ready=o.status==="готов";
+  shell("client",'<div class="phone"><div class="step">'+(o.mine&&idx===0?'Шаг 5 из 5 · ':'')+'Заказ №'+o.id+'</div><h1>'+(ready?'Заказ готов':o.status==="выдан"?'Заказ выдан':'Оплата прошла, заказ принят')+'</h1><p class="sub">'+POINT+'</p>'+
+  (ready?'<div class="ok" role="status"><b>Уведомление отправлено.</b> Покажите код оператору, очередь занимать не нужно.</div>':'')+
+  '<div class="card"><div class="small muted" style="text-align:center">Код получения</div><div class="code">'+o.code+'</div><div class="small muted" style="text-align:center">Назовите код на точке</div></div>'+
+  '<div class="card"><ul class="steps">'+ST.map(function(s,i){return '<li class="'+(i<idx||o.status==="выдан"?'done':i===idx?'now':'')+'"><i>'+(i<idx||o.status==="выдан"?'✓':i+1)+'</i>'+s[0].toUpperCase()+s.slice(1)+'</li>'}).join("")+'</ul>'+
+  (idx<2?'<p class="small muted" style="margin:6px 0 0">Ожидаемая готовность: к '+time(o.eta)+'. Следить за экраном не нужно: придёт уведомление.</p>':'')+'</div>'+
+  '<div class="card">'+'<div class="row"><span>Печать</span><span>'+money(o.print-o.discount)+'</span></div><div class="row"><span>Сервисный сбор</span><span>'+money(o.fee)+'</span></div><div class="row total"><span>Оплачено</span><span>'+money(o.total)+'</span></div><button class="linkbtn" id="rc" type="button">Показать чек</button><div id="rcv"></div></div>'+
+  '<a class="btn sec full" href="#/orders">Мои заказы</a></div>');
+  document.getElementById("rc").onclick=function(){document.getElementById("rcv").innerHTML='<p class="small muted" style="margin:8px 0 0">Чек №'+o.id+' от '+new Date(o.createdAt).toLocaleDateString("ru-RU")+', '+time(o.createdAt)+'. Сумма '+money(o.total)+'. Способ: '+(o.method==="click"?"Click":"Payme")+' (имитация).</p>'};
+}
+/* Э-05 Мои заказы */
+function vOrders(msg){
+  if(!S.session)return vLogin();
+  var my=S.orders.filter(function(o){return o.mine}).sort(function(a,b){return b.id-a.id});
+  shell("client",'<div class="phone"><div class="subnav"><a href="#/upload">Новый заказ</a><a href="#/orders" aria-current="true">Мои заказы</a></div><h1>Мои заказы</h1>'+
+  (msg?'<div class="ok">'+esc(msg)+'</div>':'<p class="sub">Повторите прошлый заказ или проверьте статус.</p>')+
+  (my.length?my.map(function(o){return '<div class="card"><div class="row" style="padding-top:0"><b>Заказ №'+o.id+'</b>'+tag(o.status)+'</div><div class="small muted" style="margin-bottom:8px">'+o.items.map(function(i){return esc(i.file)+', '+params(i)}).join("; ")+'</div><div class="row"><span>Оплачено</span><b>'+money(o.total)+'</b></div>'+
+    (o.status==="выдан"?'<div class="stars" aria-label="Оценка заказа" style="margin:4px 0 8px">'+[1,2,3,4,5].map(function(n){return '<button type="button" aria-label="Оценка '+n+'" data-rate="'+o.id+':'+n+'" class="'+(n<=o.rating?'on':'')+'">★</button>'}).join("")+'</div>':'')+
+    '<div class="actions"><a class="btn small sec" href="#/status/'+o.id+'">Статус и код</a><button class="btn small sec" type="button" data-again="'+o.id+'">Повторить</button></div></div>'}).join(""):'<div class="card muted">Заказов пока нет.</div>')+'</div>');
+  Array.prototype.forEach.call(document.querySelectorAll("[data-again]"),function(b){b.onclick=function(){
+    var o=byId(b.dataset.again),i=o.items[0];
+    S.draft={files:o.items.map(function(x){return {name:x.file,size:"—",pages:x.pages}}),format:i.format,color:i.color,copies:i.copies,binding:i.binding,promo:""};save();go("#/params");
+  }});
+  Array.prototype.forEach.call(document.querySelectorAll("[data-rate]"),function(b){b.onclick=function(){var p=b.dataset.rate.split(":");byId(p[0]).rating=+p[1];save();vOrders("Спасибо за оценку.")}});
+}
+function opNav(cur){return '<div class="subnav"><a href="#/op/queue" aria-current="'+(cur==="q")+'">Очередь заказов</a><a href="#/op/issue" aria-current="'+(cur==="i")+'">Выдача по коду</a></div>'}
+/* Э-06 Очередь */
+function vQueue(msg){
+  var q=S.orders.filter(function(o){return o.status==="принят"||o.status==="в печати"||o.status==="готов"}).sort(function(a,b){return a.createdAt-b.createdAt});
+  shell("op",'<div class="wide">'+opNav("q")+'<h1>Очередь заказов</h1><p class="sub">'+POINT+'. Заказы идут по времени оплаты: первым печатается самый ранний.</p>'+
+  (msg?'<div class="ok" role="status">'+esc(msg)+'</div>':'')+
+  '<div class="card tablewrap"><table><thead><tr><th>№</th><th>Файл и параметры</th><th>Оплачен</th><th>Срок</th><th>Статус</th><th>Действие</th></tr></thead><tbody>'+
+  (q.length?q.map(function(o){return '<tr><td><b>'+o.id+'</b></td><td>'+o.items.map(function(i){return '<div>'+esc(i.file)+' <button class="linkbtn" data-dl="'+esc(i.file)+'" type="button">скачать</button></div><div class="small muted">'+i.pages+' стр., '+params(i)+'</div>'}).join("")+'</td><td>'+time(o.createdAt)+'</td><td>'+time(o.eta)+'</td><td>'+tag(o.status)+'</td><td>'+
+    (o.status==="принят"?'<button class="btn small" data-to="'+o.id+':в печати" type="button">В печать</button>':o.status==="в печати"?'<button class="btn small" data-to="'+o.id+':готов" type="button">Готов</button>':'<span class="small muted">Ждёт клиента</span><br><a class="small" href="#/op/issue">Выдать по коду</a>')+'</td></tr>'}).join(""):'<tr><td colspan="6" class="muted">Очередь пуста.</td></tr>')+
+  '</tbody></table></div></div>');
+  Array.prototype.forEach.call(document.querySelectorAll("[data-to]"),function(b){b.onclick=function(){var p=b.dataset.to.split(":"),o=byId(p[0]);o.status=p[1];save();vQueue(p[1]==="готов"?"Заказ №"+o.id+" готов: клиенту отправлено уведомление.":"Заказ №"+o.id+" в печати.")}});
+  Array.prototype.forEach.call(document.querySelectorAll("[data-dl]"),function(b){b.onclick=function(){vQueue("Файл «"+b.dataset.dl+"» скачан (имитация).")}});
+}
+/* Э-07 Выдача */
+function vIssue(err,found,done){
+  shell("op",'<div class="wide">'+opNav("i")+'<h1>Выдача по коду</h1><p class="sub">Введите код, который назвал клиент.</p>'+
+  '<div class="card" style="max-width:460px"><form id="f" novalidate>'+(err?'<div class="err" role="alert">'+esc(err)+'</div>':'')+(done?'<div class="ok" role="status">'+esc(done)+'</div>':'')+
+  '<div class="field"><label for="cd">Код получения, 4 цифры</label><input id="cd" type="text" inputmode="numeric" maxlength="4" autocomplete="off"></div><button class="btn" type="submit">Найти заказ</button></form></div>'+
+  (found?'<div class="card" style="max-width:460px"><div class="row" style="padding-top:0"><b>Заказ №'+found.id+'</b>'+tag(found.status)+'</div>'+found.items.map(function(i){return '<div class="small">'+esc(i.file)+', '+i.pages+' стр., '+params(i)+'</div>'}).join("")+'<div class="row"><span>Оплачено</span><b>'+money(found.total)+'</b></div>'+(found.status==="готов"?'<button class="btn full" id="give" type="button">Выдать заказ</button>':'<div class="warn" style="margin:6px 0 0">Заказ ещё не готов: статус «'+found.status+'».</div>')+'</div>':'')+'</div>');
+  document.getElementById("f").onsubmit=function(e){e.preventDefault();
+    var v=document.getElementById("cd").value.trim();
+    var o=S.orders.filter(function(x){return x.code===v&&x.status!=="выдан"})[0];
+    if(!o)return vIssue("Заказ с кодом «"+v+"» не найден. Проверьте цифры.");
+    vIssue(null,o);
+  };
+  if(found&&found.status==="готов")document.getElementById("give").onclick=function(){found.status="выдан";save();vIssue(null,null,"Заказ №"+found.id+" выдан.")};
+}
+function adNav(cur){return '<div class="subnav"><a href="#/admin/prices" aria-current="'+(cur==="p")+'">Цены</a><a href="#/admin/revenue" aria-current="'+(cur==="r")+'">Выручка</a></div>'}
+/* Э-08 Цены */
+function vPrices(msg,err){
+  var p=S.prices;
+  function row(l,k1,k2){var v=k2?p[k1][k2]:p[k1];return '<tr><td><label for="'+k1+(k2||'')+'" style="font-weight:400;margin:0">'+l+'</label></td><td class="num"><input id="'+k1+(k2||'')+'" data-a="'+k1+'" data-b="'+(k2||'')+'" type="number" min="0" step="100" value="'+v+'" style="max-width:130px;text-align:right"></td></tr>'}
+  shell("admin",'<div class="wide">'+adNav("p")+'<h1>Цены точки</h1><p class="sub">'+POINT+'. Новые цены действуют только для новых заказов: оплаченные заказы сохраняют свою цену.</p>'+
+  (msg?'<div class="ok" role="status">'+esc(msg)+'</div>':'')+(err?'<div class="err" role="alert">'+esc(err)+'</div>':'')+
+  '<form id="f" class="card" style="max-width:520px"><table><thead><tr><th>Услуга</th><th class="num">Цена, сум</th></tr></thead><tbody>'+
+  row("A4, чёрно-белая, страница","A4","bw")+row("A4, цветная, страница","A4","color")+row("A3, чёрно-белая, страница","A3","bw")+row("A3, цветная, страница","A3","color")+row("Переплёт: пружина","spring")+row("Переплёт: твёрдый","hard")+
+  '</tbody></table><button class="btn" style="margin-top:12px" type="submit">Сохранить цены</button></form><div class="card small muted" style="max-width:520px">Сервисный сбор PrintNow для клиента: '+money(FEE)+' за заказ. Его задаёт сервис, в выручку точки он не входит.</div></div>');
+  document.getElementById("f").onsubmit=function(e){e.preventDefault();
+    var bad=false;Array.prototype.forEach.call(document.querySelectorAll("[data-a]"),function(i){var v=+i.value;if(!(v>0))bad=true;if(i.dataset.b)p[i.dataset.a][i.dataset.b]=v;else p[i.dataset.a]=v});
+    if(bad){S=load();return vPrices(null,"Цена должна быть больше нуля.")}
+    save();vPrices("Цены сохранены. Для уже оплаченных заказов сумма не изменилась.");
+  };
+}
+/* Э-09 Выручка */
+function vRevenue(period){
+  period=period||"week";
+  var days=period==="today"?1:period==="week"?7:30;
+  var from=Date.now()-days*86400000;
+  var list=S.orders.filter(function(o){return o.createdAt>=from});
+  var sum=list.reduce(function(a,o){return a+o.print-o.discount},0);
+  var done=list.filter(function(o){return o.status==="выдан"}).length;
+  var avg=list.length?sum/list.length:0;
+  shell("admin",'<div class="wide">'+adNav("r")+'<h1>Выручка точки</h1><p class="sub">'+POINT+'. Показана стоимость печати; сервисный сбор PrintNow сюда не входит.</p>'+
+  '<div class="field" style="max-width:240px"><label for="per">Период</label><select id="per"><option value="today" '+(period==="today"?"selected":"")+'>Сегодня</option><option value="week" '+(period==="week"?"selected":"")+'>7 дней</option><option value="month" '+(period==="month"?"selected":"")+'>30 дней</option></select></div>'+
+  '<div class="kpis"><div class="card kpi"><span class="small muted">Выручка</span><b>'+money(sum)+'</b></div><div class="card kpi"><span class="small muted">Заказов оплачено</span><b>'+list.length+'</b></div><div class="card kpi"><span class="small muted">Заказов выдано</span><b>'+done+'</b></div><div class="card kpi"><span class="small muted">Средний чек</span><b>'+money(avg)+'</b></div></div>'+
+  '<div class="card tablewrap"><h2>Заказы за период</h2><table><thead><tr><th>№</th><th>Файл</th><th>Статус</th><th class="num">Стоимость печати</th></tr></thead><tbody>'+list.slice().sort(function(a,b){return b.id-a.id}).map(function(o){return '<tr><td>'+o.id+'</td><td>'+esc(o.items[0].file)+'</td><td>'+tag(o.status)+'</td><td class="num">'+money(o.print-o.discount)+'</td></tr>'}).join("")+'</tbody></table></div>'+
+  '<div class="card small"><b>Подписка точки:</b> 400 000 сум в месяц, первый месяц бесплатно. Статус: активна.</div></div>');
+  document.getElementById("per").onchange=function(e){vRevenue(e.target.value)};
+}
+function route(){
+  var h=useHash?(location.hash||"#/upload"):CUR;var p=h.slice(2).split("/");
+  window.scrollTo(0,0);
+  if(p[0]==="upload")return vUpload();
+  if(p[0]==="login"){return vLogin()}
+  if(p[0]==="params")return vParams();
+  if(p[0]==="pay")return vPay();
+  if(p[0]==="status")return vStatus(p[1]);
+  if(p[0]==="orders")return vOrders();
+  if(p[0]==="op")return p[1]==="issue"?vIssue():vQueue();
+  if(p[0]==="admin")return p[1]==="revenue"?vRevenue():vPrices();
+  vUpload();
+}
+document.getElementById("reset").onclick=function(){store.removeItem(KEY);S=seed();go("#/upload")};
+document.addEventListener("click",function(e){var a=e.target.closest&&e.target.closest('a[href^="#/"]');if(a){e.preventDefault();go(a.getAttribute("href"))}});
+window.addEventListener("hashchange",route);
+route();
+</script>
+</body>
+</html>

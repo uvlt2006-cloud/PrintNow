@@ -1,0 +1,65 @@
+{
+  "v": 4,
+  "createdOnFiles": {
+    "v": 1,
+    "at": "2026-11-06T05:40:00Z"
+  },
+  "lists": "css",
+  "title": "PrintNow: защита проекта",
+  "cover": "cover",
+  "order": [
+    "cover",
+    "path",
+    "problem",
+    "idea",
+    "product",
+    "model",
+    "economics",
+    "research",
+    "hypotheses",
+    "personas",
+    "requirements",
+    "backlog",
+    "process",
+    "uml",
+    "database",
+    "architecture",
+    "prototype",
+    "platform",
+    "forecast",
+    "final"
+  ],
+  "sections": {
+    "s0": {
+      "description": "Вступление: команда и три этапа проекта",
+      "start": "cover"
+    },
+    "s1": {
+      "description": "Этап 1: проблема, выбор идеи, продукт и бизнес-модель",
+      "start": "problem"
+    },
+    "s2": {
+      "description": "Этап 2: исследование, персоны, требования и бэклог",
+      "start": "research"
+    },
+    "s3": {
+      "description": "Этап 3: процессы, UML, данные, архитектура, прототип и платформа",
+      "start": "process"
+    },
+    "s4": {
+      "description": "Итог: что исправлено и следующие шаги",
+      "start": "final"
+    }
+  },
+  "faces": {
+    "rubik": {
+      "family": "Rubik",
+      "href": "https://fonts.googleapis.com/css2?family=Rubik:wght@400..800&display=swap"
+    },
+    "ibm-plex-sans": {
+      "family": "IBM Plex Sans",
+      "href": "https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;600;700&display=swap"
+    }
+  },
+  "designSystems": []
+}

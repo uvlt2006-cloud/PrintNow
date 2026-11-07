@@ -1,0 +1,17 @@
+<section id="requirements" data-transition="fade" style="background:#F2EEE6;color:#1F2A30;font-family:'IBM Plex Sans', Arial, sans-serif;padding:112px 128px 160px;display:flex;flex-direction:column;gap:32px">
+
+<div style="display:flex;flex-direction:column;gap:8px">
+<p style="font-size:26px;font-weight:600;color:#A84A1B">Этап 2 · Спецификация 2.1</p>
+<h2 style="font-family:'Rubik', Arial, sans-serif;font-size:64px;font-weight:600;line-height:1.1">18 требований и 4 порога с проверкой</h2>
+</div>
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+<div style="display:flex;gap:24px;align-items:center;background:#FBFAF6;padding:32px;border:1px solid #D9D5CC;border-radius:16px"><p style="font-family:'Rubik', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1;color:#A84A1B;width:230px;flex:none">2 с</p><p style="font-size:28px;line-height:1.35;color:#4F585B">NFR-01. Пересчёт цены у 95 % запросов при 50 пользователях. Тест TC-019</p></div>
+<div style="display:flex;gap:24px;align-items:center;background:#FBFAF6;padding:32px;border:1px solid #D9D5CC;border-radius:16px"><p style="font-family:'Rubik', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1;color:#A84A1B;width:230px;flex:none">99 %</p><p style="font-size:28px;line-height:1.35;color:#4F585B">NFR-02. Доступность в часы работы точки: около 2,5 часа простоя в месяц. TC-020</p></div>
+<div style="display:flex;gap:24px;align-items:center;background:#FBFAF6;padding:32px;border:1px solid #D9D5CC;border-radius:16px"><p style="font-family:'Rubik', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1;color:#A84A1B;width:230px;flex:none">0</p><p style="font-size:28px;line-height:1.35;color:#4F585B">NFR-03. Данных карт в системе нет. Файл удаляется через 7 суток. TC-021</p></div>
+<div style="display:flex;gap:24px;align-items:center;background:#FBFAF6;padding:32px;border:1px solid #D9D5CC;border-radius:16px"><p style="font-family:'Rubik', Arial, sans-serif;font-size:64px;font-weight:700;line-height:1.1;color:#A84A1B;width:230px;flex:none">3 мин</p><p style="font-size:28px;line-height:1.35;color:#4F585B">NFR-04. Первый заказ за 5 шагов: должны уложиться не менее 4 человек из 5. TC-022</p></div>
+</div>
+<p style="font-size:28px;line-height:1.35;color:#4F585B">Восемь функций раскрыты в FR-01–FR-18: 10 Must, 4 Should и 4 Could при запасе времени. Новая модель изменила FR-03 (сбор отдельной строкой) и FR-11 (выручка без сбора), номера остались прежними.</p>
+<p style="position:absolute;left:128px;bottom:64px;width:1400px;font-size:24px"><span style="color:#4F585B">Этап 1 · Идея</span><span style="color:#4F585B"> → </span><span style="color:#A84A1B"><b>Этап 2 · Требования</b></span><span style="color:#4F585B"> → </span><span style="color:#4F585B">Этап 3 · Проектирование</span></p>
+<p style="position:absolute;left:1592px;bottom:64px;width:200px;font-size:24px;text-align:right;color:#4F585B">11 / 20</p>
+<aside>Говорит B. В спецификации нет слов без чисел: у каждого порога есть условие и тест. Например, 99 процентов считаются в часы работы точки, это около 2,5 часа простоя в месяц. Порог NFR-04 это требование. Его оценка пока гипотетическая, без реальных замеров. Смена бизнес-модели изменила только два требования, поэтому трассировка не сломалась. Осталось решить порядок работы.</aside>
+</section>
